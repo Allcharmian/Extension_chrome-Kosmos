@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Kosmos Json a CSV</title>
+  <style>
+    body {
+      width: 400px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .success {
+      background-color: #dff0d8;
+      color: #3c763d;
+    }
+
+    .error {
+      background-color: #f2dede;
+      color: #a94442;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Kosmos: Json a CS<!-- Cambia el input de archivo para permitir múltiples selecciones -->
+  <div class="input-group">
+    <label for="jsonFiles">Selecciona archivos JSON (puedes elegir varios):</label>
+    <input type="file" id="jsonFiles" accept=".json" multiple>
+  </div>
+  
+  <!-- Añade opción para combinar archivos -->
+  <div class="input-group">
+    <label>
+      <input type="checkbox" id="combineFiles"> Combinar todos en un solo CSV
+    </label>
+  </div>
+  
+  <!-- Cambia el nombre de salida a plural -->
+  <div class="input-group">
+    <label for="outputName">Nombre base para archivos de salida:</label>
+    <input type="text" id="outputName" placeholder="salida.csv">
+  </div>
+
+  <button id="processBtn">Procesar</button>
+
+  <div id="status"></div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
