@@ -261,7 +261,7 @@ async function processMultipleFiles() {
                 } 
                 else {
                     const csvContent = convertToCSV(tableData);
-                    let fileName = `${baseName.replace('.csv', '')}${index}.csv`;
+                    let fileName = `${baseName.replace('.csv', '')}.csv`; //puedes dejar ${index + 1} para que te entregue archivos indexados
                     await downloadCSV(csvContent, fileName);
                 }
 
@@ -302,7 +302,7 @@ async function processMultipleFiles() {
 }
 document.getElementById('processBtn').addEventListener('click', processMultipleFiles);
 
-// Event listeners antigüo n.n
+// Event listeners antigüo n.n 
 // document.getElementById('processBtn').addEventListener('click', processFile);
 
 async function downloadCSV(csvContent, fileName) {
