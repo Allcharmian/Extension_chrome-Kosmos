@@ -4,38 +4,116 @@
 <head>
   <title>Kosmos Json a CSV</title>
   <style>
-    body {
-      width: 400px;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: "Poppins", Sans-serif;
+      text-align: center;
       padding: 15px;
-      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      color: #ff915f;
+
+    }
+
+    body {
+      width: 600px;
+      padding: 15px;
+      font-family: "Poppins", Sans-serif;
+    }
+
+    img.logo {
+      align-self: flex-start;
     }
 
     .input-group {
       margin-bottom: 15px;
+      font-family: "Poppins", Sans-serif;
+      text-align: left;
+      align-items: left;
+
+    }
+
+    input {
+      margin-bottom: 15px;
+      font-family: "Poppins", Sans-serif;
+      font-size: 15px;
+    }
+
+    .checkbox {
+      text-size-adjust: 25px;
+      font-size: 25px;
+    }
+
+    div {
+      padding: 10px;
+      font-family: "Poppins", Sans-serif;
+    }
+
+    a.ayuda {
+      align-self: flex-end;
+      width: 150px;
+      font-size: 30px;
+      text-align: end;
+      font-family: "Poppins", Sans-serif;
     }
 
     label {
       display: block;
+      color: #116dff;
+      font-size: 15px;
       margin-bottom: 5px;
       font-weight: bold;
+      text-align: left;
+      font-family: "Poppins", Sans-serif;
+    }
+
+    label.select {
+      text-align: justify;
+      font-size: 15px;
     }
 
     input[type="file"] {
       width: 100%;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+    }
+
+    form.formBase {
+      color: #ff915f;
+      text-align: left;
+      font-size: 30px;
+      font-family: "Poppins", Sans-serif;
+      border: 1px;
+      border-color: #000;
     }
 
     button {
-      background-color: #4CAF50;
+      background-color: #00008B;
       color: white;
-      border: none;
-      padding: 10px 15px;
       cursor: pointer;
       width: 100%;
+      font-family: "Poppins", Sans-serif;
+      font-size: 15px;
+      text-decoration: none;
+      border-style: solid;
+      border-width: 2px 2px 2px 2px;
+      border-color: #1558EA;
+      border-radius: 38px 38px 38px 38px;
+      background-color: #1558EA;
+      margin: 5px;
+      padding: 3% 0% 3% 0%;
+      transition: all .4s ease;
+      text-align: center;
     }
 
     button:hover {
-      background-color: #45a049;
+      background-color: #191970;
+      transition: all .4s ease;
+      text-align: center;
     }
 
     #status {
@@ -50,36 +128,71 @@
       color: #3c763d;
     }
 
-    .error {
-      background-color: #f2dede;
-      color: #a94442;
+    input.output {
+      text-align: center;
+    }
+
+    .outputName {
+      align-items: left;
     }
   </style>
 </head>
 
 <body>
-  <h1>Kosmos: Json a CS<!-- Cambia el input de archivo para permitir múltiples selecciones -->
-  <div class="input-group">
-    <label for="jsonFiles">Selecciona archivos JSON (puedes elegir varios):</label>
-    <input type="file" id="jsonFiles" accept=".json" multiple>
+  <div>
+    <nav>
+      <img width=25% height=25% src="kosmos_logo-azul@3x.png" class="logo" alt="logo de kosmos" loading="lazy">
+    </nav>
   </div>
-  
+  <h1>Documentacion</h1>
+  <div>
+    <button style="display: block;" id="mostrarVideo">Ejemplo practico</button>
+    <iframe id="miVideo" width=600px height=900px style="display: none;"
+      src="https://www.youtube.com/embed/nGeUF-GB4GQ">
+      Your browser does not support the video tag.
+    </iframe>
+    <button style="display: none;" id="ocultarVideo">ocultarVideo</button>
+  </div>
+  <div id="documento" style="display: none;" class="input-group">
+    <label for="jsonFiles">Selecciona archivos JSON:</label>
+    <input type="file" id="jsonFiles" accept=".json">
+  </div>
+
   <!-- Añade opción para combinar archivos -->
-  <div class="input-group">
-    <label>
-      <input type="checkbox" id="combineFiles"> Combinar todos en un solo CSV
+  <div style="display: none;" class="input-group">
+    <label class="select">
+      <input text-align="flex-start" type="checkbox" id="combineFiles"> Combinar todos en un solo CSV
     </label>
   </div>
-  
-  <!-- Cambia el nombre de salida a plural -->
+
+  <!-- linkedin.com/in/alexisxd -->
   <div class="input-group">
-    <label for="outputName">Nombre base para archivos de salida:</label>
-    <input type="text" id="outputName" placeholder="salida.csv">
+    <form id="formularioBase" style=" display: none;">
+      <label class="label-oculto" for="formFlujo">Nombre del flujo</label>
+      <input type="text" id="formFlujo" placeholder="nombra el flujo" value="">
+      <label class="label-oculto" for="formPagina">Nombre de la Pagina</label>
+      <input type="text" id="formPagina" placeholder="nombra la pagina" value="">
+      <label class="label-oculto" for="formEstatus">Nombre del Estatus</label>
+      <input type="text" id="formEstatus" placeholder="nombra el estatus" value="">
+    </form>
+    <form style="display: none;" id="archivoSalida" class="input-group">
+      <label id="labelbase" for="outputName">Nombre base para archivos de salida:</label>
+      <input type="text" id="outputName" placeholder="nombra tu archivo">
+    </form>
   </div>
+  <button style="display: none;" id="processBtn">Procesar</button>
+  <button style="display: block;" id="nombrePaginaEstatus">Colocar nombre de Pagina y Estatus</button>
 
-  <button id="processBtn">Procesar</button>
-
+  <!-- el estatus se muestra abajo -->
   <div id="status"></div>
+  
+  <div id="errorReport"
+    style="display: none; margin-top: 15px; padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px;">
+    <h4 style="margin-top: 0;">Archivos con errores:</h4>
+    <ul id="errorList" style="margin-bottom: 0;">
+      <!-- Los errores aparecerán aquí -->
+    </ul>
+  </div>
 
   <script src="popup.js"></script>
 </body>

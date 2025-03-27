@@ -7,6 +7,8 @@ const ACTION_TERMS = {
     "SHOW": "SHOW"
 };
 
+
+
 const SET_PATTERN = /(simpleVariables|complexVariables)\.set\(\s*['"](.*?)['"]\s*,\s*(.*?)\s*\)/g;
 const MODIFY_PATTERN = /(simpleVariables|complexVariables)\.modify\(\s*['"](.*?)['"]\s*,\s*(.*?)\s*\)/g;
 const GET_PATTERN = /const\s+(\w+)\s*:\s*(\w+)\s*=\s*_json\.get\(\s*['"](.*?)['"]\s*\)(?:\.get\(\s*['"](.*?)['"]\s*\))?;/g;
@@ -18,6 +20,11 @@ const FIELDS_TO_REMOVE = [
     'blockFields', 'blockWhileProcessing', 'blockFields', 'specificationId',
     'specification', 'businessLogicRelationship', 'componentKey', 'stringFunctionPreview'
 ];
+
+
+const formFlujo = document.getElementById('formFlujo');
+const formPagina = document.getElementById('formPagina');
+const formEstatus = document.getElementById('formEstatus');
 
 // Funciones auxiliares
 function showStatus(message, isError = false) {
@@ -53,6 +60,29 @@ function cleanData(data) {
     return cleanedData;
 }
 
+document.getElementById("mostrarVideo").addEventListener("click", function(){
+    document.getElementById("miVideo").style.display = "block";
+    document.getElementById("mostrarVideo").style.display = "none"
+    document.getElementById("ocultarVideo").style.display = "block";
+});
+
+document.getElementById("ocultarVideo").addEventListener("click", function(){
+    document.getElementById("mostrarVideo").style.display = "block";
+    document.getElementById("miVideo").style.display = "none";
+    document.getElementById("ocultarVideo").style.display = "none"
+})
+
+document.getElementById("nombrePaginaEstatus").addEventListener("click", function(){
+    document.getElementById("formularioBase").style.display = "block";
+    document.getElementById("archivoSalida").style.display = "block";
+    document.getElementById("processBtn").style.display = "block";
+    document.getElementById("nombrePaginaEstatus").style.display = "none";
+    document.getElementById("mostrarVideo").style.display = "none";
+    document.getElementById("miVideo").style.display = "none";
+    document.getElementById("ocultarVideo").style.display = "none";
+    document.getElementById("documento").style.display = "block";
+});
+
 function transformJsonToTable(data) {
     if (typeof data !== 'object' || data === null) {
         showStatus("Los datos de entrada deben ser un objeto", true);
@@ -70,9 +100,9 @@ function transformJsonToTable(data) {
         // Procesar businessLogicList
         data.businessLogicList.forEach(bl => {
             const row = {
-                "FLUJO": "No disponible",
-                "PAGINA": "No disponible",
-                "ESTATUS": "No disponible",
+                "FLUJO": formFlujo.value || "No disponible",
+                "PAGINA": formPagina.value || "No disponible",
+                "ESTATUS": formEstatus.value || "No disponible",
                 "COMPONENTE": bl.event || "No disponible",
                 "TITULO COMPONENTE": bl.event || "No disponible",
                 "ACCION": ACTION_TERMS[bl.event] || "No disponible",
@@ -129,9 +159,9 @@ function transformJsonToTable(data) {
 
             if (tipoVarList.length === 0) {
                 rows.push({
-                    "FLUJO": comp.specification?.specificationId || "No disponible",
-                    "PAGINA": "No disponible",
-                    "ESTATUS": "No disponible",
+                    "FLUJO": formFlujo.value || "No disponible",
+                    "PAGINA": formPagina.value || "No disponible",
+                    "ESTATUS": formEstatus.value || "No disponible",
                     "COMPONENTE": comp.component || "No disponible",
                     "TITULO COMPONENTE": meta.title || "No disponible",
                     "ACCION": meta.title || "No disponible",
@@ -146,9 +176,9 @@ function transformJsonToTable(data) {
             } else {
                 for (let i = 0; i < tipoVarList.length; i++) {
                     rows.push({
-                        "FLUJO": comp.specification?.specificationId || "No disponible",
-                        "PAGINA": "No disponible",
-                        "ESTATUS": "No disponible",
+                        "FLUJO": formFlujo.value || "No disponible",
+                        "PAGINA": formPagina.value || "No disponible",
+                        "ESTATUS": formEstatus.value || "No disponible",
                         "COMPONENTE": comp.component || "No disponible",
                         "TITULO COMPONENTE": meta.title || "No disponible",
                         "ACCION": "No disponible",
@@ -177,10 +207,8 @@ function convertToCSV(data) {
     const headers = Object.keys(data[0]);
     const csvRows = [];
 
-    // Agregar encabezados
     csvRows.push(headers.join(','));
 
-    // Agregar filas
     for (const row of data) {
         const values = headers.map(header => {
             const escaped = ('' + row[header]).replace(/"/g, '""');
@@ -191,10 +219,9 @@ function convertToCSV(data) {
 
     return csvRows.join('\n');
 }
-
 async function processMultipleFiles() {
     const fileInput = document.getElementById('jsonFiles');
-    const outputNameInput = document.getElementById('outputName');
+    const outputNameInput = document.getElementById('outputName', 'set');
     const combineFiles = document.getElementById('combineFiles').checked;
 
     if (fileInput.files.length === 0) {
@@ -202,29 +229,36 @@ async function processMultipleFiles() {
         return;
     }
 
+    hideErrorReport();
     const baseName = outputNameInput.value.trim() || "salida";
     const files = Array.from(fileInput.files);
     let allData = [];
     let processedCount = 0;
+    const errorReports = [];
 
     showStatus(`Procesando ${files.length} archivos...`);
 
     try {
-        // Procesar cada archivo individualmente
         for (const [index, file] of files.entries()) {
             try {
                 const fileContent = await readFileAsText(file);
+
+                if (!fileContent.trim().startsWith('{') && !fileContent.trim().startsWith('[')) {
+                    throw new Error("El archivo no parece ser un JSON valido");
+                }
+
                 const jsonData = JSON.parse(fileContent);
                 const cleanedData = cleanData(jsonData);
                 const tableData = transformJsonToTable(cleanedData);
 
-                if (!tableData) continue;
+                if (!tableData || tableData.length === 0) {
+                    throw new Error("No se pudo transformar el JSON a tabla (estructura no reconocida)");
+                }
 
                 if (combineFiles) {
-                    // Si estamos combinando, añadimos a un array común
                     allData.push(...tableData);
-                } else {
-                    // Si no, generamos un CSV individual
+                } 
+                else {
                     const csvContent = convertToCSV(tableData);
                     let fileName = `${baseName.replace('.csv', '')}_${index + 1}.csv`;
                     await downloadCSV(csvContent, fileName);
@@ -232,34 +266,46 @@ async function processMultipleFiles() {
 
                 processedCount++;
                 showStatus(`Procesados ${processedCount}/${files.length} archivos...`);
-            } catch (e) {
+            } 
+            catch (e) {
                 console.error(`Error procesando ${file.name}:`, e);
-                showStatus(`Error en ${file.name}: ${e.message}`, true);
+                errorReports.push({
+                    fileName: file.name,
+                    message: e.message || "Error desconocido"
+                });
+                showStatus(`Error en ${file.name} (ver detalles abajo)`, true);
             }
         }
 
-        // Si estamos combinando, generamos un único CSV al final
+        if (errorReports.length > 0) {
+            showErrorReport(errorReports);
+        }
+
         if (combineFiles && allData.length > 0) {
             const csvContent = convertToCSV(allData);
             const fileName = baseName.endsWith('.csv') ? baseName : `${baseName}.csv`;
             await downloadCSV(csvContent, fileName);
         }
 
-        showStatus(`Proceso completado. ${processedCount} archivos procesados.`);
+        const successMessage = `Proceso completado. ${processedCount}/${files.length} archivos procesados correctamente.`;
+        if (errorReports.length > 0) {
+            showStatus(`${successMessage} ${errorReports.length} con errores.`, true);
+        } 
+        else {
+            showStatus(successMessage);
+        }
     } catch (e) {
         showStatus(`Error general: ${e.message}`, true);
         console.error(e);
     }
 }
-
-// Actualiza el event listener
 document.getElementById('processBtn').addEventListener('click', processMultipleFiles);
 
 // Event listeners antigüo n.n
 // document.getElementById('processBtn').addEventListener('click', processFile);
+
 async function downloadCSV(csvContent, fileName) {
     try {
-        // Asegurar que el nombre termina en .csv
         if (!fileName.endsWith('.csv')) {
             fileName += '.csv';
         }
@@ -273,8 +319,7 @@ async function downloadCSV(csvContent, fileName) {
             conflictAction: 'uniquify'
         });
 
-        // Liberar memoria
-        setTimeout(() => URL.revokeObjectURL(url), 30000);
+        setTimeout(() => URL.revokeObjectURL(url), 3000);
 
         return true;
     } catch (error) {
@@ -309,7 +354,6 @@ async function processFile() {
 
         const csvContent = convertToCSV(tableData);
 
-        // Descargar el archivo
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
 
@@ -333,4 +377,23 @@ function readFileAsText(file) {
         reader.onerror = error => reject(error);
         reader.readAsText(file);
     });
+}
+
+function showErrorReport(errors) {
+    const errorReport = document.getElementById('errorReport');
+    const errorList = document.getElementById('errorList');
+
+    errorList.innerHTML = '';
+
+    errors.forEach(error => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${error.fileName}</strong>: ${error.message}`;
+        errorList.appendChild(li);
+    });
+
+    errorReport.style.display = 'block';
+}
+
+function hideErrorReport() {
+    document.getElementById('errorReport').style.display = 'none';
 }
