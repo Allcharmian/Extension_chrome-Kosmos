@@ -25,6 +25,7 @@ const FIELDS_TO_REMOVE = [
 const formFlujo = document.getElementById('formFlujo');
 const formPagina = document.getElementById('formPagina');
 const formEstatus = document.getElementById('formEstatus');
+const formSeccion = document.getElementById('formSeccion');
 
 // Funciones auxiliares
 function showStatus(message, isError = false) {
@@ -260,7 +261,7 @@ async function processMultipleFiles() {
                 } 
                 else {
                     const csvContent = convertToCSV(tableData);
-                    let fileName = `${baseName.replace('.csv', '')}_${index + 1}.csv`;
+                    let fileName = `${baseName.replace('.csv', '')}${index}.csv`;
                     await downloadCSV(csvContent, fileName);
                 }
 
@@ -337,7 +338,7 @@ async function processFile() {
         return;
     }
 
-    const outputName = outputNameInput.value.trim() || "output.csv";
+    const outputName = formFlujo.value + "_" + formPagina.value + "_" + formEstatus.value + "_" + outputNameInput.value.trim() || "output.csv";
     if (!outputName.endsWith('.csv')) {
         outputNameInput.value = outputName + '.csv';
     }

@@ -169,15 +169,17 @@
   <div class="input-group">
     <form id="formularioBase" style=" display: none;">
       <label class="label-oculto" for="formFlujo">Nombre del flujo</label>
-      <input type="text" id="formFlujo" placeholder="nombra el flujo" value="">
+      <input type="text" id="formFlujo" placeholder="nombra el flujo" value="" required>
       <label class="label-oculto" for="formPagina">Nombre de la Pagina</label>
-      <input type="text" id="formPagina" placeholder="nombra la pagina" value="">
+      <input type="text" id="formPagina" placeholder="nombra la pagina" value="" required>
       <label class="label-oculto" for="formEstatus">Nombre del Estatus</label>
-      <input type="text" id="formEstatus" placeholder="nombra el estatus" value="">
+      <input type="text" id="formEstatus" placeholder="nombra el estatus" value="" required>
+      <label class="label-oculto" for="formSeccion">Nombre Seccion</label>
+      <input type="text" id="formSeccion" placeholder="nombre Seccion" value="" required>
     </form>
     <form style="display: none;" id="archivoSalida" class="input-group">
-      <label id="labelbase" for="outputName">Nombre base para archivos de salida:</label>
-      <input type="text" id="outputName" placeholder="nombra tu archivo">
+      <label id="labelbase" for="outputName">Nombre del boton:</label>
+      <input type="text" id="outputName" placeholder="nombra tu archivo" required>
     </form>
   </div>
   <button style="display: none;" id="processBtn">Procesar</button>
