@@ -231,7 +231,7 @@ async function processMultipleFiles() {
     }
 
     hideErrorReport();
-    const baseName = outputNameInput.value.trim() || "salida";
+    const baseName = formFlujo.value + "_" + formPagina.value + "_" + formEstatus.value + "_" + formSeccion.value + "_" + outputNameInput.value.trim() || "salida";
     const files = Array.from(fileInput.files);
     let allData = [];
     let processedCount = 0;
@@ -338,7 +338,7 @@ async function processFile() {
         return;
     }
 
-    const outputName = formFlujo.value + "_" + formPagina.value + "_" + formEstatus.value + "_" + outputNameInput.value.trim() || "output.csv";
+    const outputName = formFlujo.value + "_" + formPagina.value + "_" + formEstatus.value + "_" + formSeccion.value +"_" + outputNameInput.value.trim() || "output.csv";
     if (!outputName.endsWith('.csv')) {
         outputNameInput.value = outputName + '.csv';
     }
