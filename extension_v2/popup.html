@@ -17,6 +17,7 @@
 
     h1 {
       color: #ff915f;
+
     }
 
     body {
@@ -29,11 +30,130 @@
       align-self: flex-start;
     }
 
+    /* Ocultar formulario inicialmente */
+    #formularioBase,
+    #archivoSalida {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      display: block;
+      /* Asegura que el espacio está reservado */
+      visibility: hidden;
+    }
+
+    /* Mostrar con animación */
+    .mostrar-formulario {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+      visibility: visible !important;
+    }
+
+    /* Ocultar formulario inicialmente */
+    #formularioBase,
+    #archivoSalida {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+      display: block;
+      visibility: hidden;
+    }
+
+    /* Clase para mostrar el formulario con animación */
+    .mostrar-formulario {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+      visibility: visible !important;
+    }
+
+
+    /* Contenedor general */
     .input-group {
-      margin-bottom: 15px;
-      font-family: "Poppins", Sans-serif;
-      text-align: left;
-      align-items: left;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    /* Labels */
+    .input-group label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Inputs */
+    .input-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #007bff;
+      border-radius: 25px;
+      font-size: 16px;
+      background: #f8f9fa;
+      color: #333;
+      outline: none;
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Efecto al enfocar */
+    .input-group input:focus {
+      border-color: #0056b3;
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+      transform: scale(1.02);
+    }
+
+    /* Cambio de color del label al enfocar */
+    .input-group input:focus+label {
+      color: #0056b3;
+    }
+
+    /* Ocultar el input original */
+    #jsonFiles {
+      display: none;
+    }
+
+    /* Estilizar el contenedor */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Estilizar el label */
+    .input-group label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Botón personalizado */
+    .file-upload {
+      display: inline-block;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      text-align: center;
+    }
+
+    /* Efecto hover en el botón */
+    .file-upload:hover {
+      background-color: #0056b3;
+      color: white;
+    }
+
+    /* Estilizar el texto del archivo seleccionado */
+    #fileName {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #555;
+      font-weight: bold;
     }
 
     input {
@@ -90,25 +210,6 @@
     }
 
     button {
-      background-color: #00008B;
-      color: white;
-      cursor: pointer;
-      width: 100%;
-      font-family: "Poppins", Sans-serif;
-      font-size: 15px;
-      text-decoration: none;
-      border-style: solid;
-      border-width: 2px 2px 2px 2px;
-      border-color: #1558EA;
-      border-radius: 38px 38px 38px 38px;
-      background-color: #1558EA;
-      margin: 5px;
-      padding: 3% 0% 3% 0%;
-      transition: all .4s ease;
-      text-align: center;
-    }
-
-    input#ContinuarBtn {
       background-color: #00008B;
       color: white;
       cursor: pointer;
