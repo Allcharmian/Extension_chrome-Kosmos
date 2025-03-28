@@ -61,19 +61,19 @@ function cleanData(data) {
     return cleanedData;
 }
 
-document.getElementById("mostrarVideo").addEventListener("click", function(){
+document.getElementById("mostrarVideo").addEventListener("click", function () {
     document.getElementById("miVideo").style.display = "block";
     document.getElementById("mostrarVideo").style.display = "none"
     document.getElementById("ocultarVideo").style.display = "block";
 });
 
-document.getElementById("ocultarVideo").addEventListener("click", function(){
+document.getElementById("ocultarVideo").addEventListener("click", function () {
     document.getElementById("mostrarVideo").style.display = "block";
     document.getElementById("miVideo").style.display = "none";
     document.getElementById("ocultarVideo").style.display = "none"
 })
 
-document.getElementById("nombrePaginaEstatus").addEventListener("click", function(){
+document.getElementById("nombrePaginaEstatus").addEventListener("click", function () {
     document.getElementById("formularioBase").style.display = "block";
     document.getElementById("archivoSalida").style.display = "block";
     document.getElementById("processBtn").style.display = "block";
@@ -83,6 +83,26 @@ document.getElementById("nombrePaginaEstatus").addEventListener("click", functio
     document.getElementById("ocultarVideo").style.display = "none";
     document.getElementById("documento").style.display = "block";
 });
+
+//Animacion formulario
+
+document.getElementById("nombrePaginaEstatus").addEventListener("click", function () {
+    let formulario = document.getElementById("formularioBase");
+    let archivoSalida = document.getElementById("archivoSalida");
+    setTimeout(() => {
+        formulario.classList.add("mostrar-formulario");
+        archivoSalida.classList.add("mostrar-formulario");
+    }, 100);
+});
+
+//Mostrar nombre del archivo cargado
+document.getElementById("jsonFiles").addEventListener("change", function () {
+    let fileName = this.files.length > 0 ? this.files[0].name : "Ningún archivo seleccionado";
+    document.getElementById("fileName").textContent = fileName;
+});
+
+
+
 
 function transformJsonToTable(data) {
     if (typeof data !== 'object' || data === null) {
@@ -258,7 +278,7 @@ async function processMultipleFiles() {
 
                 if (combineFiles) {
                     allData.push(...tableData);
-                } 
+                }
                 else {
                     const csvContent = convertToCSV(tableData);
                     let fileName = `${baseName.replace('.csv', '')}${index}.csv`;
@@ -267,7 +287,7 @@ async function processMultipleFiles() {
 
                 processedCount++;
                 showStatus(`Procesados ${processedCount}/${files.length} archivos...`);
-            } 
+            }
             catch (e) {
                 console.error(`Error procesando ${file.name}:`, e);
                 errorReports.push({
@@ -291,7 +311,7 @@ async function processMultipleFiles() {
         const successMessage = `Proceso completado. ${processedCount}/${files.length} archivos procesados correctamente.`;
         if (errorReports.length > 0) {
             showStatus(`${successMessage} ${errorReports.length} con errores.`, true);
-        } 
+        }
         else {
             showStatus(successMessage);
         }
