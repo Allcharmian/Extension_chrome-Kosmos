@@ -7,8 +7,6 @@ const ACTION_TERMS = {
     "SHOW": "SHOW"
 };
 
-
-
 const SET_PATTERN = /(simpleVariables|complexVariables)\.set\(\s*['"](.*?)['"]\s*,\s*(.*?)\s*\)/g;
 const MODIFY_PATTERN = /(simpleVariables|complexVariables)\.modify\(\s*['"](.*?)['"]\s*,\s*(.*?)\s*\)/g;
 const GET_PATTERN = /const\s+(\w+)\s*:\s*(\w+)\s*=\s*_json\.get\(\s*['"](.*?)['"]\s*\)(?:\.get\(\s*['"](.*?)['"]\s*\))?;/g;
@@ -21,11 +19,60 @@ const FIELDS_TO_REMOVE = [
     'specification', 'businessLogicRelationship', 'componentKey', 'stringFunctionPreview'
 ];
 
+// Inicialización de eventos
+document.addEventListener('DOMContentLoaded', function () {
+    // Eventos de video
+    document.getElementById("mostrarVideo").addEventListener("click", function () {
+        document.getElementById("miVideo").style.display = "block";
+        document.getElementById("mostrarVideo").style.display = "none";
+        document.getElementById("ocultarVideo").style.display = "block";
+    });
 
-const formFlujo = document.getElementById('formFlujo');
-const formPagina = document.getElementById('formPagina');
-const formEstatus = document.getElementById('formEstatus');
-const formSeccion = document.getElementById('formSeccion');
+    document.getElementById("ocultarVideo").addEventListener("click", function () {
+        document.getElementById("mostrarVideo").style.display = "block";
+        document.getElementById("miVideo").style.display = "none";
+        document.getElementById("ocultarVideo").style.display = "none";
+    });
+
+    // Evento para mostrar formulario
+    document.getElementById("nombrePaginaEstatus").addEventListener("click", function () {
+        document.getElementById("formularioBase").style.display = "block";
+        document.getElementById("nombrePaginaEstatus").style.display = "none";
+        document.getElementById("mostrarVideo").style.display = "none";
+        document.getElementById("miVideo").style.display = "none";
+        document.getElementById("ocultarVideo").style.display = "none";
+        document.getElementById("documento").style.display = "block";
+    });
+
+    // Evento para el formulario
+    document.getElementById("mainForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const nombre = document.getElementById('outputName');
+        const Flujo = document.getElementById('formFlujo');
+        const Pagina = document.getElementById('formPagina');
+        const Estatus = document.getElementById('formEstatus');
+        const Seccion = document.getElementById('formSeccion');
+
+        if (nombre.value.length === 0 || Flujo.value.length === 0 ||
+            Pagina.value.length === 0 || Estatus.value.length === 0 ||
+            Seccion.value.length === 0) {
+            showStatus("Necesitas llenar todo el formulario", true);
+            document.getElementById('status').style.color = 'red';
+            return;
+        }
+        document.getElementById("outputName").disabled = true;
+        document.getElementById("formFlujo").disabled = true;
+        document.getElementById("formPagina").disabled = true;
+        document.getElementById("formEstatus").disabled = true;
+        document.getElementById("formSeccion").disabled = true;
+        document.getElementById("processBtn").style.display = "block";
+        document.getElementById("ContinuarBtn").style.display = "none";
+    });
+
+    // Evento para procesar archivos
+    document.getElementById('processBtn').addEventListener('click', processMultipleFiles);
+});
 
 // Funciones auxiliares
 function showStatus(message, isError = false) {
@@ -61,29 +108,6 @@ function cleanData(data) {
     return cleanedData;
 }
 
-document.getElementById("mostrarVideo").addEventListener("click", function(){
-    document.getElementById("miVideo").style.display = "block";
-    document.getElementById("mostrarVideo").style.display = "none"
-    document.getElementById("ocultarVideo").style.display = "block";
-});
-
-document.getElementById("ocultarVideo").addEventListener("click", function(){
-    document.getElementById("mostrarVideo").style.display = "block";
-    document.getElementById("miVideo").style.display = "none";
-    document.getElementById("ocultarVideo").style.display = "none"
-})
-
-document.getElementById("nombrePaginaEstatus").addEventListener("click", function(){
-    document.getElementById("formularioBase").style.display = "block";
-    document.getElementById("archivoSalida").style.display = "block";
-    document.getElementById("processBtn").style.display = "block";
-    document.getElementById("nombrePaginaEstatus").style.display = "none";
-    document.getElementById("mostrarVideo").style.display = "none";
-    document.getElementById("miVideo").style.display = "none";
-    document.getElementById("ocultarVideo").style.display = "none";
-    document.getElementById("documento").style.display = "block";
-});
-
 function transformJsonToTable(data) {
     if (typeof data !== 'object' || data === null) {
         showStatus("Los datos de entrada deben ser un objeto", true);
@@ -94,6 +118,10 @@ function transformJsonToTable(data) {
         showStatus("Faltan claves requeridas en los datos de entrada", true);
         return null;
     }
+
+    const formFlujo = document.getElementById('formFlujo');
+    const formPagina = document.getElementById('formPagina');
+    const formEstatus = document.getElementById('formEstatus');
 
     const rows = [];
 
@@ -137,6 +165,8 @@ function transformJsonToTable(data) {
                 opcionDeList.push('set');
             }
 
+            SET_PATTERN.lastIndex = 0; // Reset regex
+
             let modifyMatch;
             while ((modifyMatch = MODIFY_PATTERN.exec(codeSection)) !== null) {
                 tipoVarList.push(modifyMatch[1]);
@@ -144,6 +174,8 @@ function transformJsonToTable(data) {
                 parametros2List.push(modifyMatch[3]);
                 opcionDeList.push('modify');
             }
+
+            MODIFY_PATTERN.lastIndex = 0; // Reset regex
 
             let getMatch;
             while ((getMatch = GET_PATTERN.exec(codeSection)) !== null) {
@@ -153,10 +185,7 @@ function transformJsonToTable(data) {
                 opcionDeList.push('get');
             }
 
-            // Reset las expresiones regulares
-            SET_PATTERN.lastIndex = 0;
-            MODIFY_PATTERN.lastIndex = 0;
-            GET_PATTERN.lastIndex = 0;
+            GET_PATTERN.lastIndex = 0; // Reset regex
 
             if (tipoVarList.length === 0) {
                 rows.push({
@@ -220,10 +249,15 @@ function convertToCSV(data) {
 
     return csvRows.join('\n');
 }
+
 async function processMultipleFiles() {
     const fileInput = document.getElementById('jsonFiles');
-    const outputNameInput = document.getElementById('outputName', 'set');
+    const outputNameInput = document.getElementById('outputName');
     const combineFiles = document.getElementById('combineFiles').checked;
+    const formFlujo = document.getElementById('formFlujo');
+    const formPagina = document.getElementById('formPagina');
+    const formEstatus = document.getElementById('formEstatus');
+    const formSeccion = document.getElementById('formSeccion');
 
     if (fileInput.files.length === 0) {
         showStatus("Por favor selecciona al menos un archivo JSON", true);
@@ -231,7 +265,7 @@ async function processMultipleFiles() {
     }
 
     hideErrorReport();
-    const baseName = formFlujo.value + "_" + formPagina.value + "_" + formEstatus.value + "_" + formSeccion.value + "_" + outputNameInput.value.trim() || "salida";
+    const baseName = `${formFlujo.value}_${formPagina.value}_${formEstatus.value}_${formSeccion.value}_${outputNameInput.value.trim() || "salida"}`;
     const files = Array.from(fileInput.files);
     let allData = [];
     let processedCount = 0;
@@ -245,7 +279,7 @@ async function processMultipleFiles() {
                 const fileContent = await readFileAsText(file);
 
                 if (!fileContent.trim().startsWith('{') && !fileContent.trim().startsWith('[')) {
-                    throw new Error("El archivo no parece ser un JSON valido");
+                    throw new Error("El archivo no parece ser un JSON válido");
                 }
 
                 const jsonData = JSON.parse(fileContent);
@@ -258,17 +292,15 @@ async function processMultipleFiles() {
 
                 if (combineFiles) {
                     allData.push(...tableData);
-                } 
-                else {
+                } else {
                     const csvContent = convertToCSV(tableData);
-                    let fileName = `${baseName.replace('.csv', '')}.csv`; //puedes dejar ${index + 1} para que te entregue archivos indexados
+                    let fileName = `${baseName.replace('.csv', '')}.csv`;
                     await downloadCSV(csvContent, fileName);
                 }
 
                 processedCount++;
                 showStatus(`Procesados ${processedCount}/${files.length} archivos...`);
-            } 
-            catch (e) {
+            } catch (e) {
                 console.error(`Error procesando ${file.name}:`, e);
                 errorReports.push({
                     fileName: file.name,
@@ -291,8 +323,7 @@ async function processMultipleFiles() {
         const successMessage = `Proceso completado. ${processedCount}/${files.length} archivos procesados correctamente.`;
         if (errorReports.length > 0) {
             showStatus(`${successMessage} ${errorReports.length} con errores.`, true);
-        } 
-        else {
+        } else {
             showStatus(successMessage);
         }
     } catch (e) {
@@ -300,10 +331,6 @@ async function processMultipleFiles() {
         console.error(e);
     }
 }
-document.getElementById('processBtn').addEventListener('click', processMultipleFiles);
-
-// Event listeners antigüo n.n 
-// document.getElementById('processBtn').addEventListener('click', processFile);
 
 async function downloadCSV(csvContent, fileName) {
     try {
@@ -326,48 +353,6 @@ async function downloadCSV(csvContent, fileName) {
     } catch (error) {
         console.error('Error al descargar:', error);
         return false;
-    }
-}
-
-async function processFile() {
-    const fileInput = document.getElementById('jsonFile');
-    const outputNameInput = document.getElementById('outputName');
-
-    if (fileInput.files.length === 0) {
-        showStatus("Por favor selecciona un archivo JSON", true);
-        return;
-    }
-
-    const outputName = formFlujo.value + "_" + formPagina.value + "_" + formEstatus.value + "_" + formSeccion.value +"_" + outputNameInput.value.trim() || "output.csv";
-    if (!outputName.endsWith('.csv')) {
-        outputNameInput.value = outputName + '.csv';
-    }
-
-    try {
-        const file = fileInput.files[0];
-        const fileContent = await readFileAsText(file);
-
-        const jsonData = JSON.parse(fileContent);
-        const cleanedData = cleanData(jsonData);
-
-        const tableData = transformJsonToTable(cleanedData);
-        if (!tableData) return;
-
-        const csvContent = convertToCSV(tableData);
-
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-
-        chrome.downloads.download({
-            url: url,
-            filename: outputNameInput.value,
-            conflictAction: 'uniquify'
-        });
-
-        showStatus("Archivo procesado y descargado con éxito");
-    } catch (e) {
-        showStatus(`Error: ${e.message}`, true);
-        console.error(e);
     }
 }
 
