@@ -5,12 +5,6 @@
   <meta charset="UTF-8">
   <title>Kosmos Json a CSV</title>
   <style>
-  .contenedor {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; 
-  }
     h1,
     h2,
     h3,
@@ -39,8 +33,13 @@
       align-self: flex-start;
       animation: bounceIn 1s;
     }
-
+    mainform {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: bounceIn 1s;
+    }
     .input-group {
+
       margin-bottom: 15px;
       font-family: "Poppins", Sans-serif;
       text-align: left;
@@ -49,6 +48,12 @@
     }
 
     input {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 25px;
+      background-color: white;
+      color: #000;
+      outline: none;
       margin-bottom: 15px;
       font-family: "Poppins", Sans-serif;
       font-size: 15px;
@@ -59,6 +64,21 @@
       transform: scale(1.02);
       box-shadow: 0 0 8px rgba(21, 88, 234, 0.3);
     }
+    .input-group input-focus {
+      border-color: #00008B;
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+      transform: scale(1.02);
+    }
+    .input-group input-focus+label{
+      color: #00008B;
+    }
+
+    .input-group label{
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+    
 
     .checkbox {
       text-size-adjust: 25px;
@@ -307,7 +327,7 @@
   </div>
 
   <div class="input-group" id="formularioBase" style="display: none;">
-    <form id="mainForm" style="border-radius: 15px 15px 15px 15px;"">
+    <form id="mainForm">
       <label for="formFlujo">Nombre del flujo</label>
       <input type="text" id="formFlujo" placeholder="nombra el flujo" value="" required>
       <label for="formPagina">Nombre de la Pagina</label>
