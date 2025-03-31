@@ -2,8 +2,15 @@
 <html>
 
 <head>
+  <meta charset="UTF-8">
   <title>Kosmos Json a CSV</title>
   <style>
+  .contenedor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  }
     h1,
     h2,
     h3,
@@ -13,20 +20,24 @@
       font-family: "Poppins", Sans-serif;
       text-align: center;
       padding: 15px;
+      animation: fadeIn 0.8s ease-in;
     }
 
     h1 {
       color: #ff915f;
+      animation: colorPulse 5s infinite alternate;
     }
 
     body {
       width: 600px;
       padding: 15px;
       font-family: "Poppins", Sans-serif;
+      animation: bodyFadeIn 0.5s ease-out;
     }
 
     img.logo {
       align-self: flex-start;
+      animation: bounceIn 1s;
     }
 
     .input-group {
@@ -34,12 +45,19 @@
       font-family: "Poppins", Sans-serif;
       text-align: left;
       align-items: left;
+      animation: slideUp 0.5s ease-out;
     }
 
     input {
       margin-bottom: 15px;
       font-family: "Poppins", Sans-serif;
       font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      transform: scale(1.02);
+      box-shadow: 0 0 8px rgba(21, 88, 234, 0.3);
     }
 
     .checkbox {
@@ -68,6 +86,7 @@
       font-weight: bold;
       text-align: left;
       font-family: "Poppins", Sans-serif;
+      animation: fadeIn 0.8s ease-in;
     }
 
     label.select {
@@ -78,6 +97,10 @@
     input[type="file"] {
       width: 100%;
       margin-bottom: 5px;
+    }
+
+    input[type="file"]:hover {
+      cursor: pointer;
     }
 
     form.formBase {
@@ -108,6 +131,12 @@
       text-align: center;
     }
 
+    button:hover {
+      background-color: #191970;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
     input#ContinuarBtn {
       background-color: #00008B;
       color: white;
@@ -127,10 +156,9 @@
       text-align: center;
     }
 
-    button:hover {
+    input#ContinuarBtn:hover {
       background-color: #191970;
-      transition: all .4s ease;
-      text-align: center;
+      transform: translateY(-2px);
     }
 
     #status {
@@ -138,6 +166,7 @@
       padding: 10px;
       border-radius: 4px;
       display: none;
+      animation: fadeIn 0.5s;
     }
 
     .success {
@@ -151,6 +180,101 @@
 
     .outputName {
       align-items: left;
+    }
+
+    iframe {
+      animation: fadeIn 0.8s ease-in;
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes bodyFadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes colorPulse {
+      0% {
+        color: #ff915f;
+      }
+
+      50% {
+        color: #ff6b3b;
+      }
+
+      100% {
+        color: #ff915f;
+      }
+    }
+
+    /* Animación para los elementos de error */
+    #errorReport {
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      10%,
+      30%,
+      50%,
+      70%,
+      90% {
+        transform: translateX(-5px);
+      }
+
+      20%,
+      40%,
+      60%,
+      80% {
+        transform: translateX(5px);
+      }
     }
   </style>
 </head>
@@ -171,7 +295,7 @@
     <button style="display: none;" id="ocultarVideo">Ocultar video</button>
   </div>
   <div id="documento" class="input-group">
-    <label for="jsonFiles">Selecciona archivos JSON:</label>
+    <label for="jsonFiles">📂 Selecciona archivos JSON:</label>
     <input type="file" id="jsonFiles" accept=".json" multiple>
   </div>
 
@@ -183,7 +307,7 @@
   </div>
 
   <div class="input-group" id="formularioBase" style="display: none;">
-    <form id="mainForm">
+    <form id="mainForm" style="border-radius: 15px 15px 15px 15px;"">
       <label for="formFlujo">Nombre del flujo</label>
       <input type="text" id="formFlujo" placeholder="nombra el flujo" value="" required>
       <label for="formPagina">Nombre de la Pagina</label>
@@ -201,7 +325,8 @@
   <button style="display: block;" id="nombrePaginaEstatus">Documentar Business Logic</button>
 
   <!-- el estatus se muestra abajo -->
-  <div id="status" style="margin-top: 15px; padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px;"></div>
+  <div id="status"
+    style="margin-top: 15px; padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px;"></div>
 
   <div id="errorReport"
     style="display: none; margin-top: 15px; padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px;">
